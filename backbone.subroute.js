@@ -20,6 +20,9 @@
 }(function(_, Backbone) {
 
     Backbone.SubRoute = Backbone.Router.extend({
+
+        baseURL: '',
+
         constructor: function(prefix, options) {
             options = _.defaults(options || {}, {
                 createTrailingSlashRoutes: false,
@@ -36,6 +39,8 @@
             // If the prefix does *not* have a trailing slash, we need to insert a slash as a separator
             // between the prefix and the sub-route path for each route that we register with Backbone.        
             this.separator = (prefix.slice(-1) === "/") ? "" : "/";
+
+            this.baseURL = (this.baseURL.slice(-1) === "/") ? this.baseURL : this.baseURL + "/";
 
             // if you want to match "books" and "books/" without creating separate routes, set this
             // option to "true" and the sub-router will automatically create those routes for you.
@@ -74,7 +79,7 @@
             if (route.substr(0, 1) != '/' &&
                 route.indexOf(this.prefix.substr(0, this.prefix.length - 1)) !== 0) {
 
-                route = this.prefix +
+                route = this.baseURL + this.prefix +
                     (route ? this.separator : "") +
                     route;
             }
@@ -94,6 +99,8 @@
 
                 _route += route;
             }
+
+            _route = this.baseURL + _route;
 
             if (this.createTrailingSlashRoutes) {
                 this.routes[_route + '/'] = name;
